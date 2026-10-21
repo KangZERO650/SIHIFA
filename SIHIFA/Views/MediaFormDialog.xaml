@@ -72,21 +72,46 @@
                 <!-- Row: Rating & Genre -->
                 <Grid Margin="0,0,0,14">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="160" />
-                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="18" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <!-- Rating -->
                     <StackPanel Grid.Column="0">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                            <TextBlock Text="Rating (0.0 - 10.0): " FontSize="12" FontWeight="SemiBold" 
-                                       Foreground="{DynamicResource Brush.Text.Primary}" />
-                            <TextBlock Text="{Binding Rating, StringFormat='★ {0:F1}'}" FontSize="12" FontWeight="Bold" 
-                                       Foreground="{DynamicResource Brush.Status.PlanTo}" />
-                        </StackPanel>
+                        <Grid Margin="0,0,0,6">
+                            <TextBlock Text="Rating (0.0 - 10.0)" FontSize="12" FontWeight="SemiBold" 
+                                       Foreground="{DynamicResource Brush.Text.Primary}" VerticalAlignment="Center" />
+
+                            <!-- Editable Rating Input Box with Star Icon -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <TextBlock Text="★" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource Brush.Status.PlanTo}" 
+                                           VerticalAlignment="Center" Margin="0,0,4,0" />
+                                <Border Background="{DynamicResource Brush.Input.Background}" 
+                                        BorderBrush="{DynamicResource Brush.Input.Border}" 
+                                        BorderThickness="1" CornerRadius="6" Padding="4,1">
+                                    <TextBox x:Name="RatingInput" 
+                                             Text="{Binding RatingText, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" 
+                                             Width="44" Height="22" TextAlignment="Center" FontSize="12" FontWeight="Bold"
+                                             Foreground="{DynamicResource Brush.Status.PlanTo}"
+                                             Background="Transparent" BorderThickness="0"
+                                             PreviewTextInput="RatingTextBox_PreviewTextInput"
+                                             DataObject.Pasting="RatingTextBox_Pasting"
+                                             LostFocus="RatingTextBox_LostFocus"
+                                             ToolTip="Ketik angka rating (0.0 - 10.0)" />
+                                </Border>
+                            </StackPanel>
+                        </Grid>
                         <Slider Minimum="0.0" Maximum="10.0" Value="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" 
-                                SmallChange="0.1" LargeChange="0.5" TickFrequency="1.0" IsSnapToTickEnabled="False" Margin="0,8,0,0" />
+                                SmallChange="0.1" LargeChange="0.5" TickFrequency="1.0" IsSnapToTickEnabled="False" Margin="0,6,0,0" />
+                        <!-- Error Message for Rating Input -->
+                        <ItemsControl ItemsSource="{Binding (Validation.Errors), ElementName=RatingInput}" Margin="0,3,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ErrorContent}" FontSize="10.5" Foreground="{DynamicResource Brush.Status.Dropped}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
 
                     <!-- Genre -->

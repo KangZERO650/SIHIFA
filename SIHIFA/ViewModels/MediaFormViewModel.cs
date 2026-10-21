@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using SIHIFA.Models;
 using SIHIFA.Services.Interfaces;
 
@@ -41,6 +43,88 @@ public partial class MediaFormViewModel : ObservableValidator
     private double _rating = 8.5;
 
     [ObservableProperty]
+    [NotifyDataErrorInfo]
+    [CustomValidation(typeof(MediaFormViewModel), nameof(ValidateRatingText))]
+    private string _ratingText = "8.5";
+
+    private bool _isSyncingRating;
+
+    partial void OnRatingChanged(double value)
+    {
+        if (!_isSyncingRating)
+        {
+            _isSyncingRating = true;
+            RatingText = value.ToString("0.0", CultureInfo.InvariantCulture);
+            _isSyncingRating = false;
+        }
+    }
+
+    partial void OnRatingTextChanged(string value)
+    {
+        if (_isSyncingRating || string.IsNullOrWhiteSpace(value)) return;
+
+        var normalized = value.Trim().Replace(',', '.');
+        if (double.TryParse(normalized, NumberStyles.Float, CultureInfo.InvariantCulture, out double val))
+        {
+            if (val >= 0.0 && val <= 10.0)
+            {
+                var rounded = Math.Round(val, 1);
+                if (Math.Abs(Rating - rounded) > 0.001)
+                {
+                    _isSyncingRating = true;
+                    Rating = rounded;
+                    _isSyncingRating = false;
+                }
+            }
+        }
+    }
+
+    public void FormatRatingText()
+    {
+        var normalized = RatingText?.Trim().Replace(',', '.') ?? "0";
+        if (double.TryParse(normalized, NumberStyles.Float, CultureInfo.InvariantCulture, out double val))
+        {
+            val = Math.Clamp(val, 0.0, 10.0);
+            _isSyncingRating = true;
+            Rating = Math.Round(val, 1);
+            RatingText = Rating.ToString("0.0", CultureInfo.InvariantCulture);
+            _isSyncingRating = false;
+            ClearErrors(nameof(RatingText));
+        }
+        else
+        {
+            RatingText = Rating.ToString("0.0", CultureInfo.InvariantCulture);
+            ClearErrors(nameof(RatingText));
+        }
+    }
+
+    public static ValidationResult? ValidateRatingText(string value, ValidationContext context)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return new ValidationResult("Rating wajib diisi angka.");
+        }
+
+        var normalized = value.Trim().Replace(',', '.');
+        if (!Regex.IsMatch(normalized, @"^[0-9]+(\.[0-9]+)?$"))
+        {
+            return new ValidationResult("Hanya boleh berisi karakter angka (0-9).");
+        }
+
+        if (!double.TryParse(normalized, NumberStyles.Float, CultureInfo.InvariantCulture, out double val))
+        {
+            return new ValidationResult("Format angka rating tidak valid.");
+        }
+
+        if (val < 0.0 || val > 10.0)
+        {
+            return new ValidationResult("Rating harus antara 0.0 - 10.0.");
+        }
+
+        return ValidationResult.Success;
+    }
+
+    [ObservableProperty]
     private string? _genre;
 
     [ObservableProperty]
@@ -70,6 +154,7 @@ public partial class MediaFormViewModel : ObservableValidator
         TipeMedia = item.TipeMedia;
         Status = item.Status;
         Rating = item.Rating;
+        RatingText = item.Rating.ToString("0.0", CultureInfo.InvariantCulture);
         Genre = item.Genre;
         PathCoverLocal = item.PathCoverLocal;
         Catatan = item.Catatan;
@@ -86,6 +171,7 @@ public partial class MediaFormViewModel : ObservableValidator
         TipeMedia = MediaConstants.Types.Anime;
         Status = MediaConstants.Statuses.PlanTo;
         Rating = 8.0;
+        RatingText = "8.0";
         Genre = string.Empty;
         PathCoverLocal = null;
         Catatan = string.Empty;
@@ -128,6 +214,7 @@ public partial class MediaFormViewModel : ObservableValidator
     [RelayCommand]
     private async Task SaveAsync()
     {
+        FormatRatingText();
         ValidateAllProperties();
         if (HasErrors)
         {

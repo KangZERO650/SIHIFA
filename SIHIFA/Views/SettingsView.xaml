@@ -39,16 +39,20 @@
                                FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,0,0,16" />
 
                     <Grid>
-                        <StackPanel VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
                             <TextBlock Text="Mode Tampilan Gelap (Dark Mode)" FontSize="14" FontWeight="SemiBold" 
                                        Foreground="{DynamicResource Brush.Text.Primary}" />
                             <TextBlock Text="Mengurangi kelelahan mata dengan latar arang gelap dan kontras tinggi" 
-                                       FontSize="12" Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,2,0,0" />
+                                       FontSize="12" Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,2,0,0" TextWrapping="Wrap" />
                         </StackPanel>
 
                         <!-- Toggle CheckBox styled as Switch -->
-                        <CheckBox IsChecked="{Binding IsDarkMode, Mode=TwoWay}" 
-                                  HorizontalAlignment="Right" VerticalAlignment="Center" Content="Aktifkan Dark Mode" 
+                        <CheckBox Grid.Column="1" IsChecked="{Binding IsDarkMode, Mode=TwoWay}" 
+                                  VerticalAlignment="Center" Content="Aktifkan Dark Mode" 
                                   FontSize="13" Foreground="{DynamicResource Brush.Text.Primary}" />
                     </Grid>
                 </StackPanel>
@@ -140,26 +144,38 @@
                     <TextBlock Text="Uji performa scrolling virtualisasi WPF dan efisiensi query pencarian instan (&lt; 50 ms)" 
                                FontSize="12" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,0,0,16" />
 
-                    <Grid Margin="0,0,0,12">
-                        <StackPanel VerticalAlignment="Center">
+                    <!-- Stress Test Entry Row -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,20,0">
                             <TextBlock Text="Stress Test 10.000 Entri Koleksi (PRD Section 15)" FontSize="13" FontWeight="SemiBold" 
-                                       Foreground="{DynamicResource Brush.Text.Primary}" />
+                                       Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap" />
                             <TextBlock Text="Menyuntikkan 10.000 data acak ke database untuk menguji kestabilan CollectionViewSource" 
-                                       FontSize="11" Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,2,0,0" />
+                                       FontSize="11" Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,2,0,0" TextWrapping="Wrap" />
                         </StackPanel>
-                        <Button Content="⚡ Jalankan Stress Test (10k Data)" Style="{StaticResource Style.Button.Secondary}"
-                                HorizontalAlignment="Right" Command="{Binding RunStressTestCommand}" />
+                        <Button Grid.Column="1" Content="⚡ Jalankan Stress Test (10k Data)" Style="{StaticResource Style.Button.Secondary}"
+                                VerticalAlignment="Center" Command="{Binding RunStressTestCommand}" />
                     </Grid>
 
+                    <!-- Orphaned Cache Cleanup Row -->
                     <Grid>
-                        <StackPanel VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,20,0">
                             <TextBlock Text="Pembersihan Berkas Poster Yatim (Orphaned Cache)" FontSize="13" FontWeight="SemiBold" 
-                                       Foreground="{DynamicResource Brush.Text.Primary}" />
+                                       Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap" />
                             <TextBlock Text="Hapus gambar poster di %AppData% yang sudah tidak ditautkan ke entri apapun" 
-                                       FontSize="11" Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,2,0,0" />
+                                       FontSize="11" Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,2,0,0" TextWrapping="Wrap" />
                         </StackPanel>
-                        <Button Content="🧹 Bersihkan File Sampah" Style="{StaticResource Style.Button.Secondary}"
-                                HorizontalAlignment="Right" Command="{Binding CleanCoversCommand}" />
+                        <Button Grid.Column="1" Content="🧹 Bersihkan File Sampah" Style="{StaticResource Style.Button.Secondary}"
+                                VerticalAlignment="Center" Command="{Binding CleanCoversCommand}" />
                     </Grid>
                 </StackPanel>
             </Border>
