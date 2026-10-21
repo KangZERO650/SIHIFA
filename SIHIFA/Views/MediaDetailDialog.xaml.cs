@@ -72,7 +72,7 @@ public partial class MediaDetailDialog : UserControl
             textBlock.Foreground = highlightBrush;
         }
 
-        await Task.Delay(500);
+        await Task.Delay(250);
 
         textBlock.FontWeight = originalWeight;
         textBlock.Foreground = originalBrush;
@@ -99,7 +99,7 @@ public partial class MediaDetailDialog : UserControl
         border.BorderBrush = TryFindResource("Brush.Accent.Primary") as Brush ?? Brushes.DodgerBlue;
         border.Background = TryFindResource("Brush.Accent.Soft") as Brush ?? Brushes.LightSkyBlue;
 
-        await Task.Delay(500);
+        await Task.Delay(250);
 
         border.BorderBrush = originalBorderBrush;
         border.Background = originalBackground;
