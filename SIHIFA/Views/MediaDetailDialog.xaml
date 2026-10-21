@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:converters="clr-namespace:SIHIFA.Converters"
+             xmlns:helpers="clr-namespace:SIHIFA.Helpers"
              mc:Ignorable="d" 
              d:DesignHeight="650" d:DesignWidth="750">
 
@@ -131,8 +132,9 @@
                                     CornerRadius="8" Padding="16,14" MinHeight="140">
                                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                                     <Grid>
-                                        <!-- Actual Notes Text -->
-                                        <TextBlock Text="{Binding Catatan}" FontSize="13" LineHeight="20"
+                                        <!-- Actual Notes Text with Auto Clickable Hyperlink Detection -->
+                                        <TextBlock helpers:HyperlinkHelper.FormattedText="{Binding Catatan}" 
+                                                   FontSize="13" LineHeight="20"
                                                    Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap"
                                                    Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}}" />
 
@@ -140,21 +142,7 @@
                                         <TextBlock Text="Belum ada catatan atau impresi ulasan pribadi untuk karya ini. Klik 'Edit Media' untuk menambahkan catatan Anda." 
                                                    FontSize="12" FontStyle="Italic" Foreground="{DynamicResource Brush.Text.Muted}" 
                                                    TextWrapping="Wrap" VerticalAlignment="Center"
-                                                   Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}, ConverterParameter=invert}">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Catatan}" Value="{x:Null}">
-                                                            <Setter Property="Visibility" Value="Visible" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Catatan}" Value="">
-                                                            <Setter Property="Visibility" Value="Visible" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
+                                                   Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}, ConverterParameter=invert}" />
                                     </Grid>
                                 </ScrollViewer>
                             </Border>
