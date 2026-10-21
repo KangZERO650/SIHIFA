@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Text.RegularExpressions;
 
 namespace SIHIFA.Converters;
 
@@ -96,6 +97,49 @@ public class NullToVisibilityConverter : IValueConverter
         }
 
         return isNull ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        throw new NotImplementedException();
+}
+
+public class NoteSnippetConverter : IValueConverter
+{
+    public int MaxWords { get; set; } = 10;
+    public int MaxChars { get; set; } = 65;
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        var text = value?.ToString();
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return "—";
+        }
+
+        // 1. Bersihkan karakter newline / enter (\r, \n) agar satu baris horizontal rapi
+        var cleanText = Regex.Replace(text, @"\s+", " ").Trim();
+
+        int wordLimit = MaxWords;
+        if (parameter != null && int.TryParse(parameter.ToString(), out int customLimit))
+        {
+            wordLimit = customLimit;
+        }
+
+        // 2. Potong berdasarkan N kata (delimiter)
+        var words = cleanText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        string result = cleanText;
+        if (words.Length > wordLimit)
+        {
+            result = string.Join(" ", words.Take(wordLimit)) + "...";
+        }
+
+        // 3. Batasi karakter jika ada kata super panjang tanpa spasi (misal URL panjang)
+        if (result.Length > MaxChars)
+        {
+            return result[..MaxChars].TrimEnd() + "...";
+        }
+
+        return result;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>

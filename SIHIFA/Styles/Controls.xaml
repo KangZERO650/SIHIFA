@@ -342,7 +342,7 @@
         <Setter Property="CanUserDeleteRows" Value="False" />
         <Setter Property="CanUserResizeRows" Value="False" />
         <Setter Property="HeadersVisibility" Value="Column" />
-        <Setter Property="RowHeight" Value="42" />
+        <Setter Property="RowHeight" Value="48" />
         <Setter Property="SelectionMode" Value="Single" />
         <Setter Property="SelectionUnit" Value="FullRow" />
         <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />

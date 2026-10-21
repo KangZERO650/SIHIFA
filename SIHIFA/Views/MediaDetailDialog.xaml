@@ -16,7 +16,7 @@
     </UserControl.Resources>
 
     <!-- Modal Card Container -->
-    <Border Style="{StaticResource Style.Card}" Width="700" MaxHeight="640" Padding="28,24">
+    <Border Style="{StaticResource Style.Card}" Width="700" MaxWidth="720" MaxHeight="600" Padding="26,22">
         <Grid DataContext="{Binding SelectedDetailItem}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" /> <!-- Header (Badges & Close) -->
@@ -25,7 +25,7 @@
             </Grid.RowDefinitions>
 
             <!-- 1. Header Bar -->
-            <Grid Grid.Row="0" Margin="0,0,0,18">
+            <Grid Grid.Row="0" Margin="0,0,0,16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -58,99 +58,102 @@
                         Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
             </Grid>
 
-            <!-- 2. Main Content Details (2 Columns) -->
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,0,18">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="220" /> <!-- Poster Cover Column -->
-                        <ColumnDefinition Width="20" />  <!-- Spacer -->
-                        <ColumnDefinition Width="*" />   <!-- Info & Notes Column -->
-                    </Grid.ColumnDefinitions>
+            <!-- 2. Main Content Details (2 Columns, Non-Window Scrolling) -->
+            <Grid Grid.Row="1" Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" /> <!-- Poster Cover Column -->
+                    <ColumnDefinition Width="20" />  <!-- Spacer -->
+                    <ColumnDefinition Width="*" />   <!-- Info & Notes Column -->
+                </Grid.ColumnDefinitions>
 
-                    <!-- Left: Poster Cover & Timestamps -->
-                    <StackPanel Grid.Column="0">
-                        <Border Width="210" Height="290" CornerRadius="10" Background="{DynamicResource Brush.Input.Background}"
-                                BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1">
-                            <Grid>
-                                <!-- Poster Image -->
-                                <Image Source="{Binding PathCoverLocal, Converter={StaticResource ImagePathToBitmapConverter}}"
-                                       Stretch="UniformToFill" />
-                                
-                                <!-- Fallback Placeholder Icon if null -->
-                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                                            Visibility="{Binding PathCoverLocal, Converter={StaticResource NullToVisConverter}, ConverterParameter=invert}">
-                                    <TextBlock Text="🖼" FontSize="42" HorizontalAlignment="Center" Opacity="0.4" />
-                                    <TextBlock Text="Tidak ada poster" FontSize="11" Foreground="{DynamicResource Brush.Text.Muted}" 
-                                               HorizontalAlignment="Center" Margin="0,6,0,0" />
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
-                        <!-- Timestamps Info -->
-                        <Border Background="{DynamicResource Brush.Input.Background}" CornerRadius="8" 
-                                Padding="12,10" Margin="0,12,10,0">
-                            <StackPanel>
-                                <TextBlock Text="INFORMASI WAKTU" FontSize="10" FontWeight="Bold" 
-                                           Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,0,0,4" />
-                                <TextBlock Text="{Binding CreatedAt, StringFormat='Ditambahkan: {0:dd MMM yyyy, HH:mm}'}" 
-                                           FontSize="11" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,2" />
-                                <TextBlock Text="{Binding UpdatedAt, StringFormat='Diperbarui: {0:dd MMM yyyy, HH:mm}'}" 
-                                           FontSize="11" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,2" />
+                <!-- Left: Poster Cover & Timestamps -->
+                <StackPanel Grid.Column="0">
+                    <Border Width="195" Height="255" CornerRadius="10" Background="{DynamicResource Brush.Input.Background}"
+                            BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1">
+                        <Grid>
+                            <!-- Poster Image -->
+                            <Image Source="{Binding PathCoverLocal, Converter={StaticResource ImagePathToBitmapConverter}}"
+                                   Stretch="UniformToFill" />
+                            
+                            <!-- Fallback Placeholder Icon if null -->
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                                        Visibility="{Binding PathCoverLocal, Converter={StaticResource NullToVisConverter}, ConverterParameter=invert}">
+                                <TextBlock Text="🖼" FontSize="38" HorizontalAlignment="Center" Opacity="0.4" />
+                                <TextBlock Text="Tidak ada poster" FontSize="11" Foreground="{DynamicResource Brush.Text.Muted}" 
+                                           HorizontalAlignment="Center" Margin="0,6,0,0" />
                             </StackPanel>
-                        </Border>
-                    </StackPanel>
+                        </Grid>
+                    </Border>
 
-                    <!-- Right: Title, Genre, and Personal Notes -->
-                    <StackPanel Grid.Column="2">
-                        <!-- Judul Karya -->
-                        <TextBlock Text="{Binding Judul}" FontSize="22" FontWeight="Bold" 
-                                   Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap" Margin="0,0,0,8" />
-
-                        <!-- Genre Section -->
-                        <StackPanel Margin="0,0,0,16">
-                            <TextBlock Text="GENRE" FontSize="11" FontWeight="Bold" 
-                                       Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,0,0,4" />
-                            <TextBlock Text="{Binding Genre, TargetNullValue='Tidak ada genre tertera'}" 
-                                       FontSize="13" Foreground="{DynamicResource Brush.Text.Secondary}" TextWrapping="Wrap" />
-                        </StackPanel>
-
-                        <!-- Separator -->
-                        <Border Height="1" Background="{DynamicResource Brush.Card.Border}" Margin="0,0,0,16" />
-
-                        <!-- Personal Notes & Impressions -->
+                    <!-- Timestamps Info -->
+                    <Border Background="{DynamicResource Brush.Input.Background}" CornerRadius="8" 
+                            Padding="10,8" Margin="0,10,5,0">
                         <StackPanel>
-                            <Grid Margin="0,0,0,6">
-                                <TextBlock Text="CATATAN &amp; IMPRESI PRIBADI" FontSize="11" FontWeight="Bold" 
-                                           Foreground="{DynamicResource Brush.Text.Muted}" />
-                                <TextBlock Text="💬 Catatan Pribadi" FontSize="11" FontWeight="SemiBold" 
-                                           Foreground="{DynamicResource Brush.Accent.Primary}" HorizontalAlignment="Right" />
-                            </Grid>
-
-                            <!-- Notes Card Box -->
-                            <Border Background="{DynamicResource Brush.Input.Background}" 
-                                    BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1" 
-                                    CornerRadius="8" Padding="16,14" MinHeight="140">
-                                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                    <Grid>
-                                        <!-- Actual Notes Text with Auto Clickable Hyperlink Detection -->
-                                        <TextBlock helpers:HyperlinkHelper.FormattedText="{Binding Catatan}" 
-                                                   FontSize="13" LineHeight="20"
-                                                   Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap"
-                                                   Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}}" />
-
-                                        <!-- Empty Placeholder if Catatan is null/empty -->
-                                        <TextBlock Text="Belum ada catatan atau impresi ulasan pribadi untuk karya ini. Klik 'Edit Media' untuk menambahkan catatan Anda." 
-                                                   FontSize="12" FontStyle="Italic" Foreground="{DynamicResource Brush.Text.Muted}" 
-                                                   TextWrapping="Wrap" VerticalAlignment="Center"
-                                                   Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}, ConverterParameter=invert}" />
-                                    </Grid>
-                                </ScrollViewer>
-                            </Border>
+                            <TextBlock Text="INFORMASI WAKTU" FontSize="9" FontWeight="Bold" 
+                                       Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,0,0,4" />
+                            <TextBlock Text="{Binding CreatedAt, StringFormat='Ditambahkan: {0:dd MMM yyyy, HH:mm}'}" 
+                                       FontSize="10.5" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,1" />
+                            <TextBlock Text="{Binding UpdatedAt, StringFormat='Diperbarui: {0:dd MMM yyyy, HH:mm}'}" 
+                                       FontSize="10.5" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,1" />
                         </StackPanel>
+                    </Border>
+                </StackPanel>
 
+                <!-- Right: Title, Genre, and Independent Scroll Notes -->
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" /> <!-- Judul Karya -->
+                        <RowDefinition Height="Auto" /> <!-- Genre Section -->
+                        <RowDefinition Height="Auto" /> <!-- Separator Line -->
+                        <RowDefinition Height="Auto" /> <!-- Catatan Header -->
+                        <RowDefinition Height="*" />    <!-- Independent Scroll Notes Box -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Judul Karya -->
+                    <TextBlock Grid.Row="0" Text="{Binding Judul}" FontSize="20" FontWeight="Bold" 
+                               Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap" Margin="0,0,0,6" />
+
+                    <!-- Genre Section -->
+                    <StackPanel Grid.Row="1" Margin="0,0,0,12">
+                        <TextBlock Text="GENRE" FontSize="10.5" FontWeight="Bold" 
+                                   Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,0,0,3" />
+                        <TextBlock Text="{Binding Genre, TargetNullValue='Tidak ada genre tertera'}" 
+                                   FontSize="12.5" Foreground="{DynamicResource Brush.Text.Secondary}" TextWrapping="Wrap" />
                     </StackPanel>
+
+                    <!-- Separator -->
+                    <Border Grid.Row="2" Height="1" Background="{DynamicResource Brush.Card.Border}" Margin="0,0,0,12" />
+
+                    <!-- Catatan & Impresi Header -->
+                    <Grid Grid.Row="3" Margin="0,0,0,6">
+                        <TextBlock Text="CATATAN &amp; IMPRESI PRIBADI" FontSize="10.5" FontWeight="Bold" 
+                                   Foreground="{DynamicResource Brush.Text.Muted}" />
+                        <TextBlock Text="💬 Catatan Pribadi" FontSize="10.5" FontWeight="SemiBold" 
+                                   Foreground="{DynamicResource Brush.Accent.Primary}" HorizontalAlignment="Right" />
+                    </Grid>
+
+                    <!-- Personal Notes Card Box with INDEPENDENT SCROLL -->
+                    <Border Grid.Row="4" Background="{DynamicResource Brush.Input.Background}" 
+                            BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1" 
+                            CornerRadius="8" Padding="14,12" MinHeight="100" MaxHeight="210">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <Grid>
+                                <!-- Actual Notes Text with Auto Clickable Hyperlink Detection -->
+                                <TextBlock helpers:HyperlinkHelper.FormattedText="{Binding Catatan}" 
+                                           FontSize="13" LineHeight="20"
+                                           Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap"
+                                           Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}}" />
+
+                                <!-- Empty Placeholder if Catatan is null/empty -->
+                                <TextBlock Text="Belum ada catatan atau impresi ulasan pribadi untuk karya ini. Klik 'Edit Media' untuk menambahkan catatan Anda." 
+                                           FontSize="12" FontStyle="Italic" Foreground="{DynamicResource Brush.Text.Muted}" 
+                                           TextWrapping="Wrap" VerticalAlignment="Center"
+                                           Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}, ConverterParameter=invert}" />
+                            </Grid>
+                        </ScrollViewer>
+                    </Border>
                 </Grid>
-            </ScrollViewer>
+            </Grid>
 
             <!-- 3. Footer Actions -->
             <Border Grid.Row="2" BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="0,1,0,0" Padding="0,14,0,0">
@@ -163,8 +166,8 @@
                     <!-- Right: Edit & Close Buttons -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Content="✎ Edit Media" Style="{StaticResource Style.Button.Secondary}" 
-                                Padding="14,8" Margin="0,0,10,0"
-                                Command="{Binding DataContext.EditFromDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                 Padding="14,8" Margin="0,0,10,0"
+                                 Command="{Binding DataContext.EditFromDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                         <Button Content="Tutup" Style="{StaticResource Style.Button.Primary}" 
                                 Padding="18,8"
                                 Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />

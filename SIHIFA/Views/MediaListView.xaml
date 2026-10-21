@@ -12,6 +12,7 @@
         <converters:StatusToBrushConverter x:Key="StatusToBrushConverter" />
         <converters:RatingFormattedConverter x:Key="RatingFormattedConverter" />
         <converters:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter" />
+        <converters:NoteSnippetConverter x:Key="NoteSnippetConverter" MaxWords="8" MaxChars="50" />
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
     </UserControl.Resources>
 
@@ -137,20 +138,43 @@
                     <DataGridTemplateColumn Header="JUDUL MEDIA" Width="3*" SortMemberPath="Judul">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Grid VerticalAlignment="Center" Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
                                     <!-- Poster Thumbnail -->
-                                    <Border Width="30" Height="40" CornerRadius="4" Background="{DynamicResource Brush.Input.Background}"
+                                    <Border Grid.Column="0" Width="30" Height="40" CornerRadius="4" 
+                                            Background="{DynamicResource Brush.Input.Background}"
                                             Margin="0,0,10,0" VerticalAlignment="Center">
                                         <Image Source="{Binding PathCoverLocal, Converter={StaticResource ImagePathToBitmapConverter}}"
                                                Stretch="UniformToFill" />
                                     </Border>
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding Judul}" FontWeight="SemiBold" FontSize="13" 
-                                                   Foreground="{DynamicResource Brush.Text.Primary}" TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Text="{Binding Catatan}" FontSize="11" 
-                                                   Foreground="{DynamicResource Brush.Text.Muted}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
-                                    </StackPanel>
-                                </StackPanel>
+
+                                    <!-- Judul & Delimited Catatan -->
+                                    <Grid Grid.Column="1" VerticalAlignment="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" Text="{Binding Judul}" FontWeight="SemiBold" FontSize="13" 
+                                                   Foreground="{DynamicResource Brush.Text.Primary}" 
+                                                   TextTrimming="CharacterEllipsis" 
+                                                   TextWrapping="NoWrap"
+                                                   ToolTip="{Binding Judul}" />
+
+                                        <TextBlock Grid.Row="1" 
+                                                   Text="{Binding Catatan, Converter={StaticResource NoteSnippetConverter}, ConverterParameter=8}" 
+                                                   FontSize="11" 
+                                                   Foreground="{DynamicResource Brush.Text.Muted}" 
+                                                   TextTrimming="CharacterEllipsis" 
+                                                   TextWrapping="NoWrap"
+                                                   Margin="0,2,0,0" 
+                                                   ToolTip="{Binding Catatan}" />
+                                    </Grid>
+                                </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -327,7 +351,10 @@
         <Grid Grid.RowSpan="4" Background="#B3000000" Margin="-28,-20,-28,-24"
               Visibility="{Binding IsDetailOpen, Converter={StaticResource BoolToVisConverter}}"
               d:Visibility="Collapsed">
-            <views:MediaDetailDialog HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                          HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+                <views:MediaDetailDialog Margin="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </ScrollViewer>
         </Grid>
 
     </Grid>
