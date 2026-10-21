@@ -133,11 +133,11 @@
                                        Foreground="{DynamicResource Brush.Text.Secondary}" />
                         </StackPanel>
 
-                        <!-- Right Actions: Theme Toggle & Quick Add -->
+                        <!-- Right Actions: Theme Toggle -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <!-- Theme Toggle Button -->
                             <Button Style="{StaticResource Style.Button.Secondary}"
-                                    Command="{Binding ToggleThemeCommand}" Margin="0,0,10,0" Padding="10,6"
+                                    Command="{Binding ToggleThemeCommand}" Padding="12,6"
                                     ToolTip="Beralih antara Tema Gelap &amp; Tema Terang">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock FontSize="12" Foreground="{DynamicResource Brush.Text.Primary}">
@@ -154,10 +154,6 @@
                                     </TextBlock>
                                 </StackPanel>
                             </Button>
-
-                            <!-- Primary Quick Add Button -->
-                            <Button Content="＋ Tambah Media" Style="{StaticResource Style.Button.Primary}"
-                                    Command="{Binding OpenCreateDialogCommand}" />
                         </StackPanel>
                     </Grid>
                 </Border>
