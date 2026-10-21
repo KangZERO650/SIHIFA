@@ -21,4 +21,55 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
   </ItemGroup>
 
+  <!-- Custom AppHost to target components\dll\SIHIFA.dll for standard build -->
+  <Target Name="CustomAppHostBinaryPath" AfterTargets="_CreateAppHost" Condition="'$(UseAppHost)' == 'true'">
+    <CreateAppHost AppHostSourcePath="$(AppHostSourcePath)"
+                   AppHostDestinationPath="$(AppHostIntermediatePath)"
+                   AppBinaryName="components\dll\$(AssemblyName)$(TargetExt)"
+                   IntermediateAssembly="@(IntermediateAssembly->'%(FullPath)')"
+                   WindowsGraphicalUserInterface="$(_UseWindowsGraphicalUserInterface)"
+                   Retries="$(CopyRetryCount)"
+                   RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+                   EnableMacOSCodeSign="$(_EnableMacOSCodeSign)"
+                   DisableCetCompat="$(_DisableCetCompat)" />
+  </Target>
+
+  <!-- Custom AppHost to target components\dll\SIHIFA.dll for dotnet publish -->
+  <Target Name="CustomAppHostForPublishBinaryPath" AfterTargets="_CreateAppHostForPublish" Condition="'$(_UpdateAppHostForPublish)' == 'true'">
+    <CreateAppHost AppHostSourcePath="$(AppHostSourcePath)"
+                   AppHostDestinationPath="$(AppHostForPublishIntermediatePath)"
+                   AppBinaryName="components\dll\$(AssemblyName)$(TargetExt)"
+                   IntermediateAssembly="@(IntermediateAssembly->'%(FullPath)')"
+                   WindowsGraphicalUserInterface="$(_UseWindowsGraphicalUserInterface)"
+                   Retries="$(CopyRetryCount)"
+                   RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+                   EnableMacOSCodeSign="$(_EnableMacOSCodeSign)"
+                   DisableCetCompat="$(_DisableCetCompat)"
+                   DotNetSearchLocations="$(AppHostDotNetSearch)"
+                   AppRelativeDotNet="$(AppHostRelativeDotNet)" />
+  </Target>
+
+  <!-- Automate moving all DLLs, culture folders, and runtime assets to components\dll -->
+  <Target Name="OrganizeBuildOutput" AfterTargets="Build" Condition="'$(_IsPublishing)' != 'true' and '$(DeployOnBuild)' != 'true'">
+    <PropertyGroup>
+      <_ScriptPath>$(MSBuildProjectDirectory)\Scripts\OrganizeOutput.ps1</_ScriptPath>
+      <_CleanTargetDir>$([System.IO.Path]::GetFullPath('$(TargetDir)').TrimEnd('\'))</_CleanTargetDir>
+    </PropertyGroup>
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(_ScriptPath)&quot; -TargetDir &quot;$(_CleanTargetDir)&quot;" />
+  </Target>
+
+  <Target Name="OrganizePublishOutput" AfterTargets="Publish">
+    <PropertyGroup>
+      <_ScriptPath>$(MSBuildProjectDirectory)\Scripts\OrganizeOutput.ps1</_ScriptPath>
+      <_CleanPublishDir>$([System.IO.Path]::GetFullPath('$(PublishDir)').TrimEnd('\'))</_CleanPublishDir>
+      <_CleanTargetDir>$([System.IO.Path]::GetFullPath('$(TargetDir)').TrimEnd('\'))</_CleanTargetDir>
+    </PropertyGroup>
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(_ScriptPath)&quot; -TargetDir &quot;$(_CleanPublishDir)&quot;" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(_ScriptPath)&quot; -TargetDir &quot;$(_CleanTargetDir)&quot;" />
+  </Target>
+
+  <Target Name="CleanComponents" AfterTargets="Clean">
+    <RemoveDir Directories="$(TargetDir)components" Condition="Exists('$(TargetDir)components')" />
+  </Target>
+
 </Project>
