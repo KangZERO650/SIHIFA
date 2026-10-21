@@ -95,10 +95,12 @@
                                            Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,0,0,4" />
                                 <TextBlock Text="{Binding CreatedAt, StringFormat='Ditambahkan: {0:dd MMM yyyy, HH:mm}'}" 
                                            FontSize="10.5" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,1"
+                                           HorizontalAlignment="Left"
                                            Cursor="Hand" ToolTip="Klik untuk menyalin waktu ditambahkan"
                                            MouseLeftButtonUp="CopyTimestamp_MouseLeftButtonUp" />
                                 <TextBlock Text="{Binding UpdatedAt, StringFormat='Diperbarui: {0:dd MMM yyyy, HH:mm}'}" 
                                            FontSize="10.5" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,1"
+                                           HorizontalAlignment="Left"
                                            Cursor="Hand" ToolTip="Klik untuk menyalin waktu diperbarui"
                                            MouseLeftButtonUp="CopyTimestamp_MouseLeftButtonUp" />
                             </StackPanel>
@@ -115,9 +117,10 @@
                             <RowDefinition Height="*" />    <!-- Independent Scroll Notes Box -->
                         </Grid.RowDefinitions>
 
-                        <!-- Judul Karya (Clickable to copy) -->
+                        <!-- Judul Karya (Clickable to copy, shrink-wrapped to text content) -->
                         <TextBlock x:Name="JudulTextBlock" Grid.Row="0" Text="{Binding Judul}" FontSize="20" FontWeight="Bold" 
                                    Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap" Margin="0,0,0,6"
+                                   HorizontalAlignment="Left"
                                    Cursor="Hand" ToolTip="Klik untuk menyalin judul karya"
                                    MouseLeftButtonUp="CopyJudul_MouseLeftButtonUp" />
 
@@ -181,12 +184,14 @@
                                 BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1" 
                                 CornerRadius="8" Padding="14,12" MinHeight="100" MaxHeight="210">
                             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                                <Grid Cursor="Hand" ToolTip="Klik untuk menyalin teks catatan"
-                                      MouseLeftButtonUp="CopyNotesContent_MouseLeftButtonUp">
+                                <Grid>
                                     <!-- Actual Notes Text with Auto Clickable Hyperlink Detection -->
                                     <TextBlock x:Name="NotesTextBlock" helpers:HyperlinkHelper.FormattedText="{Binding Catatan}" 
                                                FontSize="13" LineHeight="20"
                                                Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap"
+                                               HorizontalAlignment="Left" Cursor="Hand"
+                                               ToolTip="Klik untuk menyalin teks catatan"
+                                               MouseLeftButtonUp="CopyNotesContent_MouseLeftButtonUp"
                                                Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}}" />
 
                                     <!-- Empty Placeholder if Catatan is null/empty -->
