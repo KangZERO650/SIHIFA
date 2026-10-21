@@ -15,7 +15,7 @@ public static class MediaConstants
 
     public static class Statuses
     {
-        public const string PlanTo = "Plan to Watch/Read";
+        public const string PlanTo = "Plan to Watch/Read/Listen";
         public const string Ongoing = "Sedang Dinikmati";
         public const string Completed = "Selesai (Completed)";
         public const string OnHold = "Ditunda (On Hold)";

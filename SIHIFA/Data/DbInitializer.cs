@@ -11,7 +11,10 @@ public static class DbInitializer
 
         if (await context.MediaItems.AnyAsync())
         {
-            return; // Data sudah ada
+            // Migrasi otomatis data lama jika masih menggunakan format teks sebelumnya
+            await context.Database.ExecuteSqlRawAsync(
+                "UPDATE MediaItems SET Status = 'Plan to Watch/Read/Listen' WHERE Status = 'Plan to Watch/Read';");
+            return;
         }
 
         // Seed data sampel awal
