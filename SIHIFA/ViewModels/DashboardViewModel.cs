@@ -13,6 +13,8 @@ namespace SIHIFA.ViewModels;
 public partial class DashboardViewModel : ObservableObject
 {
     private readonly IMediaService _mediaService;
+    private readonly IThemeService _themeService;
+    private DashboardStats? _lastStats;
 
     [ObservableProperty]
     private int _totalCount;
@@ -34,7 +36,7 @@ public partial class DashboardViewModel : ObservableObject
 
     public ObservableCollection<MediaItem> RecentItems { get; } = new();
 
-    // LiveCharts2 Series
+    // LiveCharts2 Series & Styling
     [ObservableProperty]
     private ISeries[] _typeSeries = Array.Empty<ISeries>();
 
@@ -44,12 +46,27 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty]
     private Axis[] _ratingXAxes = Array.Empty<Axis>();
 
+    [ObservableProperty]
+    private Axis[] _ratingYAxes = Array.Empty<Axis>();
+
+    [ObservableProperty]
+    private SolidColorPaint? _legendTextPaint;
+
     public event Action? RequestNavigateToList;
     public event Action? RequestAddNew;
 
-    public DashboardViewModel(IMediaService mediaService)
+    public DashboardViewModel(IMediaService mediaService, IThemeService themeService)
     {
         _mediaService = mediaService;
+        _themeService = themeService;
+
+        _themeService.ThemeChanged += isDark =>
+        {
+            if (_lastStats != null)
+            {
+                BuildCharts(_lastStats);
+            }
+        };
     }
 
     [RelayCommand]
@@ -82,6 +99,15 @@ public partial class DashboardViewModel : ObservableObject
 
     private void BuildCharts(DashboardStats stats)
     {
+        _lastStats = stats;
+        bool isDark = _themeService.IsDarkMode;
+
+        var textPaintColor = isDark ? SKColor.Parse("#F8FAFC") : SKColor.Parse("#0F172A");
+        var axisPaintColor = isDark ? SKColor.Parse("#94A3B8") : SKColor.Parse("#64748B");
+        var separatorColor = isDark ? SKColor.Parse("#334155") : SKColor.Parse("#E2E8F0");
+
+        LegendTextPaint = new SolidColorPaint(textPaintColor);
+
         // 1. Doughnut Chart Distribusi Tipe Media
         var colors = new[]
         {
@@ -133,8 +159,20 @@ public partial class DashboardViewModel : ObservableObject
             new Axis
             {
                 Labels = ratingLabels,
-                LabelsPaint = new SolidColorPaint(SKColor.Parse("#94A3B8")),
-                TextSize = 12
+                LabelsPaint = new SolidColorPaint(axisPaintColor),
+                TextSize = 12,
+                SeparatorsPaint = new SolidColorPaint(separatorColor) { StrokeThickness = 1 }
+            }
+        ];
+
+        RatingYAxes =
+        [
+            new Axis
+            {
+                LabelsPaint = new SolidColorPaint(axisPaintColor),
+                TextSize = 12,
+                MinStep = 1,
+                SeparatorsPaint = new SolidColorPaint(separatorColor) { StrokeThickness = 1 }
             }
         ];
     }

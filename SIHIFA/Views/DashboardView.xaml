@@ -111,7 +111,10 @@
                         <TextBlock Text="Proporsi Anime, Film, Musik, Buku, dan Materi" FontSize="12" 
                                    Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,2,0,16" />
                         <lvc:PieChart Series="{Binding TypeSeries}" Height="230" 
-                                      LegendPosition="Right" InitialRotation="-90" />
+                                      Background="Transparent"
+                                      LegendPosition="Right"
+                                      LegendTextPaint="{Binding LegendTextPaint}"
+                                      InitialRotation="-90" />
                     </StackPanel>
                 </Border>
 
@@ -122,7 +125,11 @@
                                    Foreground="{DynamicResource Brush.Text.Primary}" />
                         <TextBlock Text="Sebaran nilai dari skor 1 hingga 10" FontSize="12" 
                                    Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,2,0,16" />
-                        <lvc:CartesianChart Series="{Binding RatingSeries}" XAxes="{Binding RatingXAxes}" Height="230" />
+                        <lvc:CartesianChart Series="{Binding RatingSeries}" 
+                                            XAxes="{Binding RatingXAxes}" 
+                                            YAxes="{Binding RatingYAxes}" 
+                                            Background="Transparent" 
+                                            Height="230" />
                     </StackPanel>
                 </Border>
             </Grid>
