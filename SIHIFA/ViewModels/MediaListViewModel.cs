@@ -38,6 +38,12 @@ public partial class MediaListViewModel : ObservableObject
     [ObservableProperty]
     private int _itemCount;
 
+    [ObservableProperty]
+    private MediaItem? _selectedDetailItem;
+
+    [ObservableProperty]
+    private bool _isDetailOpen;
+
     public List<string> TypeFilterOptions { get; } = ["Semua", .. MediaConstants.Types.All];
     public List<string> StatusFilterOptions { get; } = ["Semua", .. MediaConstants.Statuses.All];
 
@@ -182,5 +188,62 @@ public partial class MediaListViewModel : ObservableObject
         SearchText = string.Empty;
         SelectedTypeFilter = "Semua";
         SelectedStatusFilter = "Semua";
+    }
+
+    [RelayCommand]
+    private void ViewDetail(MediaItem? item)
+    {
+        item ??= SelectedItem;
+        if (item == null) return;
+        SelectedDetailItem = item;
+        IsDetailOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseDetail()
+    {
+        IsDetailOpen = false;
+        SelectedDetailItem = null;
+    }
+
+    [RelayCommand]
+    private void EditFromDetail()
+    {
+        if (SelectedDetailItem == null) return;
+        var current = SelectedDetailItem;
+        var formVm = _formFactory();
+        formVm.LoadForEdit(current);
+        formVm.RequestClose += async (saved) =>
+        {
+            if (saved)
+            {
+                await LoadDataAsync();
+                SelectedDetailItem = MediaItems.FirstOrDefault(x => x.Id == current.Id);
+            }
+        };
+
+        RequestOpenFormDialog?.Invoke(formVm);
+    }
+
+    [RelayCommand]
+    private async Task DeleteFromDetailAsync()
+    {
+        if (SelectedDetailItem == null) return;
+        var item = SelectedDetailItem;
+
+        var result = System.Windows.MessageBox.Show(
+            $"Apakah Anda yakin ingin menghapus \"{item.Judul}\" dari pustaka?",
+            "Konfirmasi Hapus",
+            System.Windows.MessageBoxButton.YesNo,
+            System.Windows.MessageBoxImage.Question);
+
+        if (result == System.Windows.MessageBoxResult.Yes)
+        {
+            await _mediaService.DeleteAsync(item.Id);
+            MediaItems.Remove(item);
+            RefreshFilter();
+            IsDetailOpen = false;
+            SelectedDetailItem = null;
+        }
     }
 }

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:converters="clr-namespace:SIHIFA.Converters"
+             xmlns:views="clr-namespace:SIHIFA.Views"
              mc:Ignorable="d" 
              d:DesignHeight="750" d:DesignWidth="1100">
 
@@ -193,11 +194,15 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <!-- Aksi (Edit, Hapus) -->
-                    <DataGridTemplateColumn Header="AKSI" Width="1.2*">
+                    <!-- Aksi (Detail, Edit, Hapus) -->
+                    <DataGridTemplateColumn Header="AKSI" Width="1.6*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Content="👁 Detail" Style="{StaticResource Style.Button.Secondary}" 
+                                            Padding="8,3" FontSize="11" Margin="0,0,6,0"
+                                            Command="{Binding DataContext.ViewDetailCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}" />
                                     <Button Content="✎ Edit" Style="{StaticResource Style.Button.Secondary}" 
                                             Padding="8,3" FontSize="11" Margin="0,0,6,0"
                                             Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
@@ -242,6 +247,15 @@
                                         <RowDefinition Height="Auto" /> <!-- Actions -->
                                     </Grid.RowDefinitions>
 
+                                    <!-- Clickable Card Area for Details -->
+                                    <Border Grid.Row="0" Grid.RowSpan="2" Cursor="Hand" Background="Transparent" Panel.ZIndex="1">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick" 
+                                                          Command="{Binding DataContext.ViewDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                          CommandParameter="{Binding}" />
+                                        </Border.InputBindings>
+                                    </Border>
+
                                     <!-- Poster Image -->
                                     <Border Grid.Row="0" CornerRadius="12,12,0,0" Background="{DynamicResource Brush.Input.Background}">
                                         <Image Source="{Binding PathCoverLocal, Converter={StaticResource ImagePathToBitmapConverter}}"
@@ -249,7 +263,7 @@
                                     </Border>
 
                                     <!-- Rating Badge Top-Right -->
-                                    <Border Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" 
+                                    <Border Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="2"
                                             Margin="8" CornerRadius="6" Background="#CC000000" Padding="6,3">
                                         <TextBlock Text="{Binding Rating, Converter={StaticResource RatingFormattedConverter}}" 
                                                    FontSize="12" FontWeight="Bold" Foreground="#F59E0B" />
@@ -272,17 +286,26 @@
                                         </StackPanel>
                                     </StackPanel>
 
-                                    <!-- Action Buttons -->
-                                    <Border Grid.Row="2" BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="0,1,0,0" Padding="12,8">
+                                    <!-- Action Buttons Footer -->
+                                    <Border Grid.Row="2" BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="0,1,0,0" Padding="12,8" Panel.ZIndex="2">
                                         <Grid>
-                                            <Button Content="✎ Edit" Style="{StaticResource Style.Button.Secondary}" 
+                                            <!-- Detail Button on Left -->
+                                            <Button Content="👁 Detail" Style="{StaticResource Style.Button.Primary}" 
                                                     HorizontalAlignment="Left" Padding="10,4" FontSize="11"
-                                                    Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    Command="{Binding DataContext.ViewDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}" />
-                                            <Button Content="Hapus" Style="{StaticResource Style.Button.Danger}" 
-                                                    HorizontalAlignment="Right" Padding="10,4" FontSize="11"
-                                                    Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    CommandParameter="{Binding}" />
+
+                                            <!-- Edit & Delete Buttons on Right -->
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Content="✎ Edit" Style="{StaticResource Style.Button.Secondary}" 
+                                                        Padding="8,4" FontSize="11" Margin="0,0,6,0"
+                                                        Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}" />
+                                                <Button Content="Hapus" Style="{StaticResource Style.Button.Danger}" 
+                                                        Padding="8,4" FontSize="11"
+                                                        Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}" />
+                                            </StackPanel>
                                         </Grid>
                                     </Border>
                                 </Grid>
@@ -299,6 +322,13 @@
             <TextBlock Text="{Binding ItemCount, StringFormat='Menampilkan {0} entri media yang sesuai kriteria'}" 
                        FontSize="12" Foreground="{DynamicResource Brush.Text.Muted}" />
         </Border>
+
+        <!-- ===================== DETAIL MODAL OVERLAY ===================== -->
+        <Grid Grid.RowSpan="4" Background="#B3000000" Margin="-28,-20,-28,-24"
+              Visibility="{Binding IsDetailOpen, Converter={StaticResource BoolToVisConverter}}"
+              d:Visibility="Collapsed">
+            <views:MediaDetailDialog HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
 
     </Grid>
 </UserControl>
