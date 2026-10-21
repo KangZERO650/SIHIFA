@@ -13,168 +13,231 @@
         <converters:RatingFormattedConverter x:Key="RatingFormattedConverter" />
         <converters:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter" />
         <converters:NullToVisibilityConverter x:Key="NullToVisConverter" />
+        <converters:StringToGenreListConverter x:Key="StringToGenreListConverter" />
     </UserControl.Resources>
 
-    <!-- Modal Card Container -->
-    <Border Style="{StaticResource Style.Card}" Width="700" MaxWidth="720" MaxHeight="600" Padding="26,22">
-        <Grid DataContext="{Binding SelectedDetailItem}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" /> <!-- Header (Badges & Close) -->
-                <RowDefinition Height="*" />    <!-- Content Details -->
-                <RowDefinition Height="Auto" /> <!-- Footer Actions -->
-            </Grid.RowDefinitions>
+    <Grid>
+        <!-- Modal Card Container -->
+        <Border Style="{StaticResource Style.Card}" Width="700" MaxWidth="720" MaxHeight="600" Padding="26,22">
+            <Grid x:Name="ContentGrid" DataContext="{Binding SelectedDetailItem}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" /> <!-- Header (Badges & Close) -->
+                    <RowDefinition Height="*" />    <!-- Content Details -->
+                    <RowDefinition Height="Auto" /> <!-- Footer Actions -->
+                </Grid.RowDefinitions>
 
-            <!-- 1. Header Bar -->
-            <Grid Grid.Row="0" Margin="0,0,0,16">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+                <!-- 1. Header Bar -->
+                <Grid Grid.Row="0" Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <!-- Badges -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <!-- Tipe Media Badge -->
-                    <Border Background="{DynamicResource Brush.Accent.Soft}" CornerRadius="6" Padding="10,4" Margin="0,0,8,0">
-                        <TextBlock Text="{Binding TipeMedia}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Brush.Accent.Primary}" />
-                    </Border>
+                    <!-- Badges -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Tipe Media Badge -->
+                        <Border Background="{DynamicResource Brush.Accent.Soft}" CornerRadius="6" Padding="10,4" Margin="0,0,8,0">
+                            <TextBlock Text="{Binding TipeMedia}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Brush.Accent.Primary}" />
+                        </Border>
 
-                    <!-- Status Badge -->
-                    <Border Background="{Binding Status, Converter={StaticResource StatusToBrushConverter}}" 
-                            CornerRadius="6" Padding="10,4" Margin="0,0,8,0" Opacity="0.9">
-                        <TextBlock Text="{Binding Status}" FontSize="12" FontWeight="Bold" Foreground="#FFFFFF" />
-                    </Border>
+                        <!-- Status Badge -->
+                        <Border Background="{Binding Status, Converter={StaticResource StatusToBrushConverter}}" 
+                                CornerRadius="6" Padding="10,4" Margin="0,0,8,0" Opacity="0.9">
+                            <TextBlock Text="{Binding Status}" FontSize="12" FontWeight="Bold" Foreground="#FFFFFF" />
+                        </Border>
 
-                    <!-- Rating Badge -->
-                    <Border Background="#1A000000" BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1" 
-                            CornerRadius="6" Padding="10,4">
-                        <TextBlock Text="{Binding Rating, Converter={StaticResource RatingFormattedConverter}}" 
-                                   FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Brush.Status.PlanTo}" />
-                    </Border>
-                </StackPanel>
-
-                <!-- Close Button -->
-                <Button Grid.Column="1" Content="✕" Style="{StaticResource Style.Button.Secondary}"
-                        Padding="8,4" FontSize="13" 
-                        Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-            </Grid>
-
-            <!-- 2. Main Content Details (2 Columns, Non-Window Scrolling) -->
-            <Grid Grid.Row="1" Margin="0,0,0,16">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" /> <!-- Poster Cover Column -->
-                    <ColumnDefinition Width="20" />  <!-- Spacer -->
-                    <ColumnDefinition Width="*" />   <!-- Info & Notes Column -->
-                </Grid.ColumnDefinitions>
-
-                <!-- Left: Poster Cover & Timestamps -->
-                <StackPanel Grid.Column="0">
-                    <Border Width="195" Height="255" CornerRadius="10" Background="{DynamicResource Brush.Input.Background}"
-                            BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1">
-                        <Grid>
-                            <!-- Poster Image -->
-                            <Image Source="{Binding PathCoverLocal, Converter={StaticResource ImagePathToBitmapConverter}}"
-                                   Stretch="UniformToFill" />
-                            
-                            <!-- Fallback Placeholder Icon if null -->
-                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                                        Visibility="{Binding PathCoverLocal, Converter={StaticResource NullToVisConverter}, ConverterParameter=invert}">
-                                <TextBlock Text="🖼" FontSize="38" HorizontalAlignment="Center" Opacity="0.4" />
-                                <TextBlock Text="Tidak ada poster" FontSize="11" Foreground="{DynamicResource Brush.Text.Muted}" 
-                                           HorizontalAlignment="Center" Margin="0,6,0,0" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <!-- Timestamps Info -->
-                    <Border Background="{DynamicResource Brush.Input.Background}" CornerRadius="8" 
-                            Padding="10,8" Margin="0,10,5,0">
-                        <StackPanel>
-                            <TextBlock Text="INFORMASI WAKTU" FontSize="9" FontWeight="Bold" 
-                                       Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,0,0,4" />
-                            <TextBlock Text="{Binding CreatedAt, StringFormat='Ditambahkan: {0:dd MMM yyyy, HH:mm}'}" 
-                                       FontSize="10.5" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,1" />
-                            <TextBlock Text="{Binding UpdatedAt, StringFormat='Diperbarui: {0:dd MMM yyyy, HH:mm}'}" 
-                                       FontSize="10.5" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,1" />
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-
-                <!-- Right: Title, Genre, and Independent Scroll Notes -->
-                <Grid Grid.Column="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" /> <!-- Judul Karya -->
-                        <RowDefinition Height="Auto" /> <!-- Genre Section -->
-                        <RowDefinition Height="Auto" /> <!-- Separator Line -->
-                        <RowDefinition Height="Auto" /> <!-- Catatan Header -->
-                        <RowDefinition Height="*" />    <!-- Independent Scroll Notes Box -->
-                    </Grid.RowDefinitions>
-
-                    <!-- Judul Karya -->
-                    <TextBlock Grid.Row="0" Text="{Binding Judul}" FontSize="20" FontWeight="Bold" 
-                               Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap" Margin="0,0,0,6" />
-
-                    <!-- Genre Section -->
-                    <StackPanel Grid.Row="1" Margin="0,0,0,12">
-                        <TextBlock Text="GENRE" FontSize="10.5" FontWeight="Bold" 
-                                   Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,0,0,3" />
-                        <TextBlock Text="{Binding Genre, TargetNullValue='Tidak ada genre tertera'}" 
-                                   FontSize="12.5" Foreground="{DynamicResource Brush.Text.Secondary}" TextWrapping="Wrap" />
+                        <!-- Rating Badge -->
+                        <Border Background="#1A000000" BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1" 
+                                CornerRadius="6" Padding="10,4">
+                            <TextBlock Text="{Binding Rating, Converter={StaticResource RatingFormattedConverter}}" 
+                                       FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Brush.Status.PlanTo}" />
+                        </Border>
                     </StackPanel>
 
-                    <!-- Separator -->
-                    <Border Grid.Row="2" Height="1" Background="{DynamicResource Brush.Card.Border}" Margin="0,0,0,12" />
+                    <!-- Close Button -->
+                    <Button Grid.Column="1" Content="✕" Style="{StaticResource Style.Button.Secondary}"
+                            Padding="8,4" FontSize="13" 
+                            Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                </Grid>
 
-                    <!-- Catatan & Impresi Header -->
-                    <Grid Grid.Row="3" Margin="0,0,0,6">
-                        <TextBlock Text="CATATAN &amp; IMPRESI PRIBADI" FontSize="10.5" FontWeight="Bold" 
-                                   Foreground="{DynamicResource Brush.Text.Muted}" />
-                        <TextBlock Text="💬 Catatan Pribadi" FontSize="10.5" FontWeight="SemiBold" 
-                                   Foreground="{DynamicResource Brush.Accent.Primary}" HorizontalAlignment="Right" />
-                    </Grid>
+                <!-- 2. Main Content Details (2 Columns, Non-Window Scrolling) -->
+                <Grid Grid.Row="1" Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200" /> <!-- Poster Cover Column -->
+                        <ColumnDefinition Width="20" />  <!-- Spacer -->
+                        <ColumnDefinition Width="*" />   <!-- Info & Notes Column -->
+                    </Grid.ColumnDefinitions>
 
-                    <!-- Personal Notes Card Box with INDEPENDENT SCROLL -->
-                    <Border Grid.Row="4" Background="{DynamicResource Brush.Input.Background}" 
-                            BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1" 
-                            CornerRadius="8" Padding="14,12" MinHeight="100" MaxHeight="210">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <!-- Left: Poster Cover & Timestamps -->
+                    <StackPanel Grid.Column="0">
+                        <Border Width="195" Height="255" CornerRadius="10" Background="{DynamicResource Brush.Input.Background}"
+                                BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1">
                             <Grid>
-                                <!-- Actual Notes Text with Auto Clickable Hyperlink Detection -->
-                                <TextBlock helpers:HyperlinkHelper.FormattedText="{Binding Catatan}" 
-                                           FontSize="13" LineHeight="20"
-                                           Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap"
-                                           Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}}" />
-
-                                <!-- Empty Placeholder if Catatan is null/empty -->
-                                <TextBlock Text="Belum ada catatan atau impresi ulasan pribadi untuk karya ini. Klik 'Edit Media' untuk menambahkan catatan Anda." 
-                                           FontSize="12" FontStyle="Italic" Foreground="{DynamicResource Brush.Text.Muted}" 
-                                           TextWrapping="Wrap" VerticalAlignment="Center"
-                                           Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}, ConverterParameter=invert}" />
+                                <!-- Poster Image -->
+                                <Image Source="{Binding PathCoverLocal, Converter={StaticResource ImagePathToBitmapConverter}}"
+                                       Stretch="UniformToFill" />
+                                
+                                <!-- Fallback Placeholder Icon if null -->
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                                            Visibility="{Binding PathCoverLocal, Converter={StaticResource NullToVisConverter}, ConverterParameter=invert}">
+                                    <TextBlock Text="🖼" FontSize="38" HorizontalAlignment="Center" Opacity="0.4" />
+                                    <TextBlock Text="Tidak ada poster" FontSize="11" Foreground="{DynamicResource Brush.Text.Muted}" 
+                                               HorizontalAlignment="Center" Margin="0,6,0,0" />
+                                </StackPanel>
                             </Grid>
-                        </ScrollViewer>
-                    </Border>
-                </Grid>
-            </Grid>
+                        </Border>
 
-            <!-- 3. Footer Actions -->
-            <Border Grid.Row="2" BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="0,1,0,0" Padding="0,14,0,0">
-                <Grid>
-                    <!-- Left: Delete Button -->
-                    <Button Content="🗑 Hapus dari Koleksi" Style="{StaticResource Style.Button.Danger}"
-                            HorizontalAlignment="Left" Padding="14,8"
-                            Command="{Binding DataContext.DeleteFromDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-
-                    <!-- Right: Edit & Close Buttons -->
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="✎ Edit Media" Style="{StaticResource Style.Button.Secondary}" 
-                                 Padding="14,8" Margin="0,0,10,0"
-                                 Command="{Binding DataContext.EditFromDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                        <Button Content="Tutup" Style="{StaticResource Style.Button.Primary}" 
-                                Padding="18,8"
-                                Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                        <!-- Timestamps Info (Clickable to copy) -->
+                        <Border Background="{DynamicResource Brush.Input.Background}" CornerRadius="8" 
+                                Padding="10,8" Margin="0,10,5,0">
+                            <StackPanel>
+                                <TextBlock Text="INFORMASI WAKTU" FontSize="9" FontWeight="Bold" 
+                                           Foreground="{DynamicResource Brush.Text.Muted}" Margin="0,0,0,4" />
+                                <TextBlock Text="{Binding CreatedAt, StringFormat='Ditambahkan: {0:dd MMM yyyy, HH:mm}'}" 
+                                           FontSize="10.5" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,1"
+                                           Cursor="Hand" ToolTip="Klik untuk menyalin waktu ditambahkan"
+                                           MouseLeftButtonUp="CopyTimestamp_MouseLeftButtonUp" />
+                                <TextBlock Text="{Binding UpdatedAt, StringFormat='Diperbarui: {0:dd MMM yyyy, HH:mm}'}" 
+                                           FontSize="10.5" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,1"
+                                           Cursor="Hand" ToolTip="Klik untuk menyalin waktu diperbarui"
+                                           MouseLeftButtonUp="CopyTimestamp_MouseLeftButtonUp" />
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </Grid>
-            </Border>
 
-        </Grid>
-    </Border>
+                    <!-- Right: Title, Genre, and Independent Scroll Notes -->
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" /> <!-- Judul Karya -->
+                            <RowDefinition Height="Auto" /> <!-- Genre Section -->
+                            <RowDefinition Height="Auto" /> <!-- Separator Line -->
+                            <RowDefinition Height="Auto" /> <!-- Catatan Header -->
+                            <RowDefinition Height="*" />    <!-- Independent Scroll Notes Box -->
+                        </Grid.RowDefinitions>
+
+                        <!-- Judul Karya (Clickable to copy) -->
+                        <TextBlock x:Name="JudulTextBlock" Grid.Row="0" Text="{Binding Judul}" FontSize="20" FontWeight="Bold" 
+                                   Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap" Margin="0,0,0,6"
+                                   Cursor="Hand" ToolTip="Klik untuk menyalin judul karya"
+                                   MouseLeftButtonUp="CopyJudul_MouseLeftButtonUp" />
+
+                        <!-- Genre Section (Separated into clickable tags) -->
+                        <StackPanel Grid.Row="1" Margin="0,0,0,12">
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="GENRE" FontSize="10.5" FontWeight="Bold" 
+                                           Foreground="{DynamicResource Brush.Text.Muted}" VerticalAlignment="Center" />
+                                <TextBlock Text="Klik genre untuk menyalin" FontSize="9.5" FontStyle="Italic" 
+                                           Foreground="{DynamicResource Brush.Text.Muted}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- Genre Tags List (Click to copy individual genre) -->
+                            <ItemsControl ItemsSource="{Binding Genre, Converter={StaticResource StringToGenreListConverter}}"
+                                          Visibility="{Binding Genre, Converter={StaticResource NullToVisConverter}}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{DynamicResource Brush.Input.Background}" 
+                                                BorderBrush="{DynamicResource Brush.Card.Border}" 
+                                                BorderThickness="1" CornerRadius="6" 
+                                                Padding="9,3" Margin="0,0,6,6" Cursor="Hand"
+                                                ToolTip="Klik untuk menyalin genre ini"
+                                                MouseLeftButtonUp="GenreTag_MouseLeftButtonUp">
+                                            <TextBlock Text="{Binding}" FontSize="12" FontWeight="Medium" 
+                                                       Foreground="{DynamicResource Brush.Text.Primary}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Fallback if Genre is empty/null -->
+                            <TextBlock Text="Tidak ada genre tertera" FontSize="12" FontStyle="Italic" 
+                                       Foreground="{DynamicResource Brush.Text.Muted}" 
+                                       Visibility="{Binding Genre, Converter={StaticResource NullToVisConverter}, ConverterParameter=invert}" />
+                        </StackPanel>
+
+                        <!-- Separator -->
+                        <Border Grid.Row="2" Height="1" Background="{DynamicResource Brush.Card.Border}" Margin="0,0,0,12" />
+
+                        <!-- Catatan & Impresi Header -->
+                        <Grid Grid.Row="3" Margin="0,0,0,6">
+                            <TextBlock Text="CATATAN &amp; IMPRESI PRIBADI" FontSize="10.5" FontWeight="Bold" 
+                                       Foreground="{DynamicResource Brush.Text.Muted}" VerticalAlignment="Center" />
+                            <Button Style="{StaticResource Style.Button.Secondary}" Padding="8,2" FontSize="10.5"
+                                    HorizontalAlignment="Right" Cursor="Hand"
+                                    Click="CopyCatatan_Click" ToolTip="Salin seluruh catatan pribadi ke clipboard"
+                                    Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📋 Salin Catatan" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Personal Notes Card Box with INDEPENDENT SCROLL -->
+                        <Border Grid.Row="4" Background="{DynamicResource Brush.Input.Background}" 
+                                BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1" 
+                                CornerRadius="8" Padding="14,12" MinHeight="100" MaxHeight="210">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <Grid Cursor="Hand" ToolTip="Klik untuk menyalin teks catatan"
+                                      MouseLeftButtonUp="CopyNotesContent_MouseLeftButtonUp">
+                                    <!-- Actual Notes Text with Auto Clickable Hyperlink Detection -->
+                                    <TextBlock x:Name="NotesTextBlock" helpers:HyperlinkHelper.FormattedText="{Binding Catatan}" 
+                                               FontSize="13" LineHeight="20"
+                                               Foreground="{DynamicResource Brush.Text.Primary}" TextWrapping="Wrap"
+                                               Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}}" />
+
+                                    <!-- Empty Placeholder if Catatan is null/empty -->
+                                    <TextBlock Text="Belum ada catatan atau impresi ulasan pribadi untuk karya ini. Klik 'Edit Media' untuk menambahkan catatan Anda." 
+                                               FontSize="12" FontStyle="Italic" Foreground="{DynamicResource Brush.Text.Muted}" 
+                                               TextWrapping="Wrap" VerticalAlignment="Center"
+                                               Visibility="{Binding Catatan, Converter={StaticResource NullToVisConverter}, ConverterParameter=invert}" />
+                                </Grid>
+                            </ScrollViewer>
+                        </Border>
+                    </Grid>
+                </Grid>
+
+                <!-- 3. Footer Actions -->
+                <Border Grid.Row="2" BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="0,1,0,0" Padding="0,14,0,0">
+                    <Grid>
+                        <!-- Left: Delete Button -->
+                        <Button Content="🗑 Hapus dari Koleksi" Style="{StaticResource Style.Button.Danger}"
+                                HorizontalAlignment="Left" Padding="14,8"
+                                Command="{Binding DataContext.DeleteFromDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+
+                        <!-- Right: Edit & Close Buttons -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="✎ Edit Media" Style="{StaticResource Style.Button.Secondary}" 
+                                     Padding="14,8" Margin="0,0,10,0"
+                                     Command="{Binding DataContext.EditFromDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                            <Button Content="Tutup" Style="{StaticResource Style.Button.Primary}" 
+                                    Padding="18,8"
+                                    Command="{Binding DataContext.CloseDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </Border>
+
+        <!-- Floating Copy Success Notification Toast -->
+        <Border x:Name="CopyToastBorder" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Background="{DynamicResource Brush.Card.Background}" 
+                BorderBrush="{DynamicResource Brush.Accent.Primary}" BorderThickness="1.5"
+                CornerRadius="16" Padding="16,8" Margin="0,0,0,24"
+                Opacity="0" Visibility="Collapsed" IsHitTestVisible="False">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="16" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.4" />
+            </Border.Effect>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="📋 " FontSize="12" />
+                <TextBlock x:Name="CopyToastText" Text="Teks disalin ke clipboard!" 
+                           FontSize="12" FontWeight="SemiBold" 
+                           Foreground="{DynamicResource Brush.Accent.Primary}" />
+            </StackPanel>
+        </Border>
+    </Grid>
 </UserControl>
