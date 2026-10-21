@@ -1,0 +1,97 @@
+using System.Globalization;
+using System.IO;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+
+namespace SIHIFA.Converters;
+
+public class StatusToBrushConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        var status = value?.ToString() ?? string.Empty;
+        var app = Application.Current;
+
+        if (status.Contains("Selesai") || status.Contains("Completed"))
+            return app.TryFindResource("Brush.Status.Completed") as Brush ?? Brushes.Green;
+
+        if (status.Contains("Sedang") || status.Contains("Ongoing"))
+            return app.TryFindResource("Brush.Status.Ongoing") as Brush ?? Brushes.DodgerBlue;
+
+        if (status.Contains("Plan"))
+            return app.TryFindResource("Brush.Status.PlanTo") as Brush ?? Brushes.Orange;
+
+        if (status.Contains("On Hold") || status.Contains("Ditunda"))
+            return app.TryFindResource("Brush.Status.OnHold") as Brush ?? Brushes.Purple;
+
+        if (status.Contains("Dropped") || status.Contains("Ditinggalkan"))
+            return app.TryFindResource("Brush.Status.Dropped") as Brush ?? Brushes.Crimson;
+
+        return app.TryFindResource("Brush.Text.Muted") as Brush ?? Brushes.Gray;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        throw new NotImplementedException();
+}
+
+public class RatingFormattedConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is double d)
+        {
+            return $"★ {d:F1}";
+        }
+        return "★ -";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        throw new NotImplementedException();
+}
+
+public class ImagePathToBitmapConverter : IValueConverter
+{
+    public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        var path = value?.ToString();
+        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+        {
+            return null; // Akan menampilkan placeholder di XAML jika null
+        }
+
+        try
+        {
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.UriSource = new Uri(path, UriKind.Absolute);
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        throw new NotImplementedException();
+}
+
+public class NullToVisibilityConverter : IValueConverter
+{
+    public bool Invert { get; set; } = false;
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        bool isNull = value == null || string.IsNullOrWhiteSpace(value.ToString());
+        if (Invert) isNull = !isNull;
+        return isNull ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        throw new NotImplementedException();
+}

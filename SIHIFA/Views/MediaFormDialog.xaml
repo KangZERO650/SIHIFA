@@ -1,0 +1,154 @@
+<UserControl x:Class="SIHIFA.Views.MediaFormDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:converters="clr-namespace:SIHIFA.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="680" d:DesignWidth="600">
+
+    <UserControl.Resources>
+        <converters:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter" />
+        <converters:NullToVisibilityConverter x:Key="NullToVisConverter" />
+    </UserControl.Resources>
+
+    <!-- Modal Card Container -->
+    <Border Style="{StaticResource Style.Card}" Width="560" MaxHeight="650" Padding="28,24">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                
+                <!-- Dialog Header -->
+                <Grid Margin="0,0,0,20">
+                    <TextBlock Text="{Binding FormTitle}" FontSize="20" FontWeight="Bold" 
+                               Foreground="{DynamicResource Brush.Text.Primary}" />
+                    <Button Content="✕" HorizontalAlignment="Right" Style="{StaticResource Style.Button.Secondary}"
+                            Padding="8,4" FontSize="12" Command="{Binding CancelCommand}" />
+                </Grid>
+
+                <!-- Field 1: Judul Media (Required with validation) -->
+                <StackPanel Margin="0,0,0,14">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <TextBlock Text="Judul Media" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{DynamicResource Brush.Text.Primary}" />
+                        <TextBlock Text=" *" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Brush.Status.Dropped}" />
+                    </StackPanel>
+                    <TextBox Text="{Binding Judul, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" 
+                             Style="{StaticResource Style.TextBox.Modern}" />
+                    <!-- Error Text Block -->
+                    <ItemsControl ItemsSource="{Binding (Validation.Errors), RelativeSource={RelativeSource AncestorType=StackPanel}}" Margin="0,4,0,0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ErrorContent}" FontSize="11" Foreground="{DynamicResource Brush.Status.Dropped}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <!-- Row: Tipe Media & Status -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Tipe Media -->
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Tipe Media" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{DynamicResource Brush.Text.Primary}" Margin="0,0,0,6" />
+                        <ComboBox ItemsSource="{Binding AvailableTypes}" SelectedItem="{Binding TipeMedia}"
+                                  Style="{StaticResource Style.ComboBox.Modern}" />
+                    </StackPanel>
+
+                    <!-- Status -->
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Status Konsumsi" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{DynamicResource Brush.Text.Primary}" Margin="0,0,0,6" />
+                        <ComboBox ItemsSource="{Binding AvailableStatuses}" SelectedItem="{Binding Status}"
+                                  Style="{StaticResource Style.ComboBox.Modern}" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Row: Rating & Genre -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="160" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Rating -->
+                    <StackPanel Grid.Column="0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <TextBlock Text="Rating (0.0 - 10.0): " FontSize="12" FontWeight="SemiBold" 
+                                       Foreground="{DynamicResource Brush.Text.Primary}" />
+                            <TextBlock Text="{Binding Rating, StringFormat='★ {0:F1}'}" FontSize="12" FontWeight="Bold" 
+                                       Foreground="{DynamicResource Brush.Status.PlanTo}" />
+                        </StackPanel>
+                        <Slider Minimum="0.0" Maximum="10.0" Value="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" 
+                                SmallChange="0.1" LargeChange="0.5" TickFrequency="1.0" IsSnapToTickEnabled="False" Margin="0,8,0,0" />
+                    </StackPanel>
+
+                    <!-- Genre -->
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Genre (Pisahkan koma)" FontSize="12" FontWeight="SemiBold" 
+                                   Foreground="{DynamicResource Brush.Text.Primary}" Margin="0,0,0,6" />
+                        <TextBox Text="{Binding Genre, UpdateSourceTrigger=PropertyChanged}" 
+                                 Style="{StaticResource Style.TextBox.Modern}" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Field Cover Poster (Local Image Cache) -->
+                <StackPanel Margin="0,0,0,14">
+                    <TextBlock Text="Poster / Gambar Cover" FontSize="12" FontWeight="SemiBold" 
+                               Foreground="{DynamicResource Brush.Text.Primary}" Margin="0,0,0,6" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Thumbnail Preview -->
+                        <Border Grid.Column="0" Width="70" Height="90" CornerRadius="8" 
+                                Background="{DynamicResource Brush.Input.Background}" BorderBrush="{DynamicResource Brush.Card.Border}"
+                                BorderThickness="1">
+                            <Image Source="{Binding PathCoverLocal, Converter={StaticResource ImagePathToBitmapConverter}}"
+                                   Stretch="UniformToFill" />
+                        </Border>
+
+                        <!-- Action Buttons & Path -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <Button Content="📁 Pilih File Gambar..." Style="{StaticResource Style.Button.Secondary}"
+                                        Command="{Binding BrowseCoverCommand}" Margin="0,0,8,0" Padding="10,6" FontSize="12" />
+                                <Button Content="Hapus Gambar" Style="{StaticResource Style.Button.Secondary}"
+                                        Command="{Binding RemoveCoverCommand}" Padding="10,6" FontSize="12"
+                                        Visibility="{Binding PathCoverLocal, Converter={StaticResource NullToVisConverter}}" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding PathCoverLocal}" FontSize="11" 
+                                       Foreground="{DynamicResource Brush.Text.Muted}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Field Catatan / Review Pribadi -->
+                <StackPanel Margin="0,0,0,20">
+                    <TextBlock Text="Catatan &amp; Impresi Pribadi" FontSize="12" FontWeight="SemiBold" 
+                               Foreground="{DynamicResource Brush.Text.Primary}" Margin="0,0,0,6" />
+                    <TextBox Text="{Binding Catatan, UpdateSourceTrigger=PropertyChanged}" 
+                             Style="{StaticResource Style.TextBox.Modern}" Height="75"
+                             TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
+                </StackPanel>
+
+                <!-- Action Footer Buttons -->
+                <Grid Margin="0,6,0,0">
+                    <Button Content="Batal" Style="{StaticResource Style.Button.Secondary}" 
+                            HorizontalAlignment="Left" Width="100" Command="{Binding CancelCommand}" />
+                    <Button Content="💾 Simpan Entri" Style="{StaticResource Style.Button.Primary}" 
+                            HorizontalAlignment="Right" Width="140" Command="{Binding SaveCommand}" />
+                </Grid>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
+</UserControl>

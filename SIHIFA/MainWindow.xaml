@@ -1,0 +1,177 @@
+<Window x:Class="SIHIFA.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:SIHIFA.ViewModels"
+        xmlns:views="clr-namespace:SIHIFA.Views"
+        mc:Ignorable="d"
+        Title="SIHIFA — Sistem Informasi Hiburan dan Media Favorit" 
+        Height="820" Width="1260" MinHeight="620" MinWidth="960"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource Brush.Window.Background}">
+
+    <Window.Resources>
+        <!-- DataTemplates for ViewModel Navigation -->
+        <DataTemplate DataType="{x:Type viewmodels:DashboardViewModel}">
+            <views:DashboardView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:MediaListViewModel}">
+            <views:MediaListView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:SettingsViewModel}">
+            <views:SettingsView />
+        </DataTemplate>
+
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <!-- Main Application Layout Grid -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="230" /> <!-- Sidebar -->
+                <ColumnDefinition Width="*" />   <!-- Content Canvas -->
+            </Grid.ColumnDefinitions>
+
+            <!-- ===================== SIDEBAR ===================== -->
+            <Border Grid.Column="0" Background="{DynamicResource Brush.Sidebar.Background}" 
+                    BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="0,0,1,0">
+                <Grid Margin="18,22,18,18">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" /> <!-- Logo & Title -->
+                        <RowDefinition Height="Auto" /> <!-- Spacer -->
+                        <RowDefinition Height="*" />    <!-- Navigation Links -->
+                        <RowDefinition Height="Auto" /> <!-- Bottom Profile/Badge -->
+                    </Grid.RowDefinitions>
+
+                    <!-- App Brand Header -->
+                    <StackPanel Grid.Row="0" Margin="4,0,0,24">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Visual Logo Badge -->
+                            <Border Width="34" Height="34" CornerRadius="8" Background="{DynamicResource Brush.Accent.Primary}" 
+                                    Margin="0,0,10,0">
+                                <TextBlock Text="S" FontSize="20" FontWeight="Bold" Foreground="#FFFFFF" 
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="SIHIFA" FontSize="18" FontWeight="Bold" 
+                                           Foreground="{DynamicResource Brush.Text.Primary}" />
+                                <TextBlock Text="Media Curator" FontSize="11" FontWeight="SemiBold" 
+                                           Foreground="{DynamicResource Brush.Text.Muted}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Navigation Items -->
+                    <StackPanel Grid.Row="2">
+                        <TextBlock Text="MENU UTAMA" FontSize="10" FontWeight="Bold" 
+                                   Foreground="{DynamicResource Brush.Text.Muted}" Margin="10,0,0,10" />
+
+                        <!-- 1. Dashboard Nav -->
+                        <RadioButton Content="📊  Dasbor Analitik" 
+                                     IsChecked="{Binding IsDashboardSelected}" 
+                                     Command="{Binding NavigateToDashboardCommand}" 
+                                     Style="{StaticResource Style.Button.Nav}" />
+
+                        <!-- 2. Media List Nav -->
+                        <RadioButton Content="📚  Pustaka &amp; Koleksi" 
+                                     IsChecked="{Binding IsMediaListSelected}" 
+                                     Command="{Binding NavigateToMediaListCommand}" 
+                                     Style="{StaticResource Style.Button.Nav}" />
+
+                        <!-- Separator -->
+                        <Border Height="1" Background="{DynamicResource Brush.Card.Border}" Margin="0,16,0,16" />
+
+                        <TextBlock Text="MANAJEMEN" FontSize="10" FontWeight="Bold" 
+                                   Foreground="{DynamicResource Brush.Text.Muted}" Margin="10,0,0,10" />
+
+                        <!-- 3. Add Media Shortcut -->
+                        <Button Content="＋  Tambah Media Baru" 
+                                Command="{Binding OpenCreateDialogCommand}" 
+                                Style="{StaticResource Style.Button.Secondary}" 
+                                HorizontalContentAlignment="Left" Padding="14,10" Margin="0,3" />
+
+                        <!-- 4. Settings Nav -->
+                        <RadioButton Content="⚙  Pengaturan &amp; Data" 
+                                     IsChecked="{Binding IsSettingsSelected}" 
+                                     Command="{Binding NavigateToSettingsCommand}" 
+                                     Style="{StaticResource Style.Button.Nav}" />
+                    </StackPanel>
+
+                    <!-- Bottom App Info & Offline Status -->
+                    <Border Grid.Row="3" Background="{DynamicResource Brush.Card.Background}" 
+                            BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="1" 
+                            CornerRadius="8" Padding="12,10">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="8" Height="8" Fill="{DynamicResource Brush.Status.Completed}" Margin="0,0,8,0" />
+                                <TextBlock Text="Offline-First Ready" FontSize="11" FontWeight="SemiBold" 
+                                           Foreground="{DynamicResource Brush.Text.Primary}" />
+                            </StackPanel>
+                            <TextBlock Text="SQLite Database Lokal" FontSize="10" 
+                                       Foreground="{DynamicResource Brush.Text.Muted}" Margin="16,2,0,0" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- ===================== MAIN CANVAS ===================== -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="58" /> <!-- Header Bar -->
+                    <RowDefinition Height="*" />  <!-- Dynamic View Host -->
+                </Grid.RowDefinitions>
+
+                <!-- Header Bar -->
+                <Border Grid.Row="0" Background="{DynamicResource Brush.Header.Background}" 
+                        BorderBrush="{DynamicResource Brush.Card.Border}" BorderThickness="0,0,0,1" Padding="28,0">
+                    <Grid>
+                        <!-- Left: Subtitle / Current View Context -->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Ruang Kerja Koleksi Pribadi" FontSize="13" FontWeight="SemiBold" 
+                                       Foreground="{DynamicResource Brush.Text.Secondary}" />
+                        </StackPanel>
+
+                        <!-- Right Actions: Theme Toggle & Quick Add -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <!-- Theme Toggle Button -->
+                            <Button Style="{StaticResource Style.Button.Secondary}"
+                                    Command="{Binding ToggleThemeCommand}" Margin="0,0,10,0" Padding="10,6"
+                                    ToolTip="Beralih antara Tema Gelap &amp; Tema Terang">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontSize="12" Foreground="{DynamicResource Brush.Text.Primary}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="☀️ Mode Terang" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsDarkMode}" Value="False">
+                                                        <Setter Property="Text" Value="🌙 Mode Gelap" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Primary Quick Add Button -->
+                            <Button Content="＋ Tambah Media" Style="{StaticResource Style.Button.Primary}"
+                                    Command="{Binding OpenCreateDialogCommand}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Dynamic Content View Host -->
+                <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}" />
+            </Grid>
+        </Grid>
+
+        <!-- ===================== MODAL DIALOG OVERLAY ===================== -->
+        <Grid Background="#B3000000" Visibility="{Binding IsDialogOpen, Converter={StaticResource BoolToVisConverter}}"
+              d:Visibility="Collapsed">
+            <views:MediaFormDialog DataContext="{Binding ActiveDialogViewModel}" 
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
+    </Grid>
+</Window>

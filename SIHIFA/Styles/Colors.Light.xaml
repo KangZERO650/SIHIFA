@@ -1,0 +1,48 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Light Theme Palette (Clean Slate / White) -->
+    <SolidColorBrush x:Key="Brush.Window.Background" Color="#F1F5F9" />
+    <SolidColorBrush x:Key="Brush.Sidebar.Background" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Brush.Header.Background" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Brush.Card.Background" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Brush.Card.Hover" Color="#F8FAFC" />
+    <SolidColorBrush x:Key="Brush.Card.Border" Color="#E2E8F0" />
+
+    <!-- Text Brushes -->
+    <SolidColorBrush x:Key="Brush.Text.Primary" Color="#0F172A" />
+    <SolidColorBrush x:Key="Brush.Text.Secondary" Color="#475569" />
+    <SolidColorBrush x:Key="Brush.Text.Muted" Color="#94A3B8" />
+
+    <!-- Accents -->
+    <SolidColorBrush x:Key="Brush.Accent.Primary" Color="#2563EB" />
+    <SolidColorBrush x:Key="Brush.Accent.Hover" Color="#1D4ED8" />
+    <SolidColorBrush x:Key="Brush.Accent.Soft" Color="#DBEAFE" />
+    <SolidColorBrush x:Key="Brush.Accent.Text" Color="#FFFFFF" />
+
+    <!-- Badges / Status Indicators -->
+    <SolidColorBrush x:Key="Brush.Status.Completed" Color="#059669" />
+    <SolidColorBrush x:Key="Brush.Status.Ongoing" Color="#2563EB" />
+    <SolidColorBrush x:Key="Brush.Status.PlanTo" Color="#D97706" />
+    <SolidColorBrush x:Key="Brush.Status.OnHold" Color="#7C3AED" />
+    <SolidColorBrush x:Key="Brush.Status.Dropped" Color="#DC2626" />
+
+    <!-- Inputs & Controls -->
+    <SolidColorBrush x:Key="Brush.Input.Background" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Brush.Input.Border" Color="#CBD5E1" />
+    <SolidColorBrush x:Key="Brush.Input.FocusBorder" Color="#2563EB" />
+
+    <!-- DataGrid -->
+    <SolidColorBrush x:Key="Brush.DataGrid.HeaderBackground" Color="#F8FAFC" />
+    <SolidColorBrush x:Key="Brush.DataGrid.RowBackground" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Brush.DataGrid.RowAlt" Color="#F8FAFC" />
+    <SolidColorBrush x:Key="Brush.DataGrid.RowHover" Color="#EFF6FF" />
+    <SolidColorBrush x:Key="Brush.DataGrid.RowSelected" Color="#DBEAFE" />
+    <SolidColorBrush x:Key="Brush.DataGrid.GridLine" Color="#E2E8F0" />
+
+    <!-- ScrollBar -->
+    <SolidColorBrush x:Key="Brush.ScrollBar.Thumb" Color="#CBD5E1" />
+    <SolidColorBrush x:Key="Brush.ScrollBar.ThumbHover" Color="#94A3B8" />
+    <SolidColorBrush x:Key="Brush.ScrollBar.Track" Color="#F1F5F9" />
+
+</ResourceDictionary>
